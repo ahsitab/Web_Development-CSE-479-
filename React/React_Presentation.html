@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React.js Presentation</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for a modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for the slide show container and individual slides */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent body scrolling */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+        .presentation-container {
+            width: 95vw; /* Slightly less than full width */
+            height: 90vh; /* Slightly less than full height */
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slide {
+            width: 90%; /* Width of the actual slide content area */
+            max-width: 1200px; /* Max width for larger screens */
+            height: 90%; /* Height of the actual slide content area, adjusted for content */
+            background-color: white;
+            border-radius: 1.5rem; /* rounded-3xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+            transition: opacity 0.5s ease-in-out; /* Smooth fade transition */
+            opacity: 0; /* Hidden by default */
+            position: absolute; /* Position slides on top of each other */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Hidden by default, controlled by JS */
+            padding: 2.5rem; /* Increased padding for content */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+            flex-direction: column; /* Ensure content stacks vertically */
+            align-items: flex-start; /* Align content to the left */
+            justify-content: flex-start; /* Align content to the top-left */
+            text-align: left; /* Align all text to the left */
+            overflow-y: auto; /* Allow vertical scrolling within slide if content exceeds height */
+        }
+        .slide.active {
+            opacity: 1;
+            display: flex; /* Show active slide */
+        }
+        .slide h2 {
+            text-align: left; /* Ensure title is also left-aligned */
+            width: 100%; /* Take full width for alignment */
+            margin-bottom: 1.5rem;
+            color: #4f46e5; /* indigo-600 */
+            font-size: 2.75rem; /* text-4xl equivalent */
+            font-weight: 700; /* font-bold */
+        }
+        .slide ul, .slide p, .slide pre, .slide .code-example-container {
+            text-align: left; /* Align list items, paragraphs, and preformatted text to the left */
+            width: 100%; /* Take full width for alignment */
+            margin-bottom: 1rem; /* Spacing between elements */
+        }
+        .slide ul.list-disc, .slide ul.list-circle {
+            padding-left: 1.5rem; /* Add padding for list bullets */
+        }
+
+        /* Code Block Styling */
+        pre {
+            background-color: #2d2d2d; /* Dark background for code */
+            color: #f8f8f2; /* Light text color */
+            padding: 1.5rem; /* Increased padding for code box */
+            border-radius: 0.75rem; /* rounded-xl */
+            overflow-x: auto; /* Allow horizontal scrolling for long lines */
+            white-space: pre-wrap; /* Wrap long lines */
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace; /* Monospace font for code */
+            font-size: 1rem; /* Slightly larger font size for code */
+            line-height: 1.5; /* Increased line height for readability */
+            margin-top: 1.5rem; /* Increased margin */
+            margin-bottom: 1.5rem; /* Increased margin */
+            flex-grow: 1; /* Allow pre to grow */
+            max-height: 70%; /* Max height for code block within the slide */
+        }
+        code {
+            color: #a6e22e; /* Light green for general code */
+        }
+        .code-keyword { color: #f92672; } /* Pink for keywords */
+        .code-string { color: #e6db74; } /* Yellow for strings */
+        .code-comment { color: #75715e; } /* Gray for comments */
+        .code-function { color: #66d9ef; } /* Cyan for functions */
+        .code-variable { color: #fd971f; } /* Orange for variables */
+        .code-tag { color: #ae81ff; } /* Purple for HTML/JSX tags */
+        .code-attribute { color: #a6e22e; } /* Green for attributes */
+
+        /* Code Output Styling (for separate output slides) */
+        .code-output-container {
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            text-align: left;
+            overflow-y: auto;
+        }
+        .code-output-container h3 {
+            font-size: 2.25rem; /* text-3xl */
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 1.5rem;
+        }
+        .code-output-content {
+            background-color: #e2e8f0; /* Light gray background for output */
+            border-left: 5px solid #4f46e5; /* Indigo border */
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+            color: #1a202c; /* Dark text */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.6;
+            width: 100%;
+        }
+        .code-output-content strong {
+            color: #4f46e5; /* Indigo for strong text in output */
+        }
+
+        /* Navigation Controls */
+        .navigation-controls {
+            position: absolute;
+            bottom: 5%; /* Position at the bottom */
+            width: 90%;
+            max-width: 1000px; /* Match slide max-width */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10; /* Ensure controls are above slides */
+        }
+        .nav-button {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            border: none;
+            border-radius: 9999px; /* Fully rounded for circle shape */
+            width: 50px; /* Fixed width for circle */
+            height: 50px; /* Fixed height for circle */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem; /* Large font size for arrows */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .nav-button:hover {
+            background-color: #4338ca; /* indigo-700 */
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.15), 0 3px 6px -1px rgba(0, 0, 0, 0.08);
+        }
+        .nav-button:active {
+            transform: translateY(0);
+            box-shadow: none; /* Press effect */
+        }
+        .slide-counter {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            color: #374151; /* gray-700 */
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .slide, .code-output-container {
+                width: 95%;
+                height: 85%;
+                padding: 1.5rem;
+            }
+            .slide h2, .code-output-container h3 {
+                font-size: 2rem; /* text-3xl */
+                margin-bottom: 1rem;
+            }
+            .slide ul, .slide p, .slide pre, .code-output-content {
+                font-size: 0.95rem; /* slightly smaller text */
+                margin-bottom: 0.75rem;
+            }
+            pre {
+                font-size: 0.8rem;
+                padding: 0.75rem;
+                max-height: 60%; /* Adjust max-height for smaller screens */
+            }
+            .code-output-content {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+            .navigation-controls {
+                width: 95%;
+                bottom: 2%;
+            }
+            .nav-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+            .slide-counter {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+
+        <!-- Slide 1: Introduction to React -->
+        <div id="slide-1" class="slide p-8 active">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Welcome to the World of React.js!</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li>What is React? A JavaScript library for building user interfaces.</li>
+                <li>Developed and maintained by Facebook (now Meta).</li>
+                <li>Used for building single-page applications (SPAs) and dynamic UIs.</li>
+                <li>Focuses on the "View" layer of the application.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 2: Why React? -->
+        <div id="slide-2" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">The "Why" Behind React's Popularity</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li><strong class="text-indigo-600">Declarative:</strong> You describe what the UI should look like, and React handles the rest.</li>
+                <li><strong class="text-indigo-600">Component-Based:</strong> UIs are broken down into reusable, self-contained components.</li>
+                <li><strong class="text-indigo-600">Efficient:</strong> Uses a Virtual DOM to minimize direct manipulation of the browser DOM.</li>
+                <li><strong class="text-indigo-600">Large Community:</strong> Abundant resources, tutorials, and libraries.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 3: React Features -->
+        <div id="slide-3" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Core Features of React</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li><strong class="text-indigo-600">Virtual DOM:</strong> A lightweight copy of the real DOM for faster updates.</li>
+                <li><strong class="text-indigo-600">JSX:</strong> A syntax extension for JavaScript that looks like HTML.</li>
+                <li><strong class="text-indigo-600">Component-Based Architecture:</strong> The foundation of all React apps.</li>
+                <li><strong class="text-indigo-600">Unidirectional Data Flow:</strong> Data flows in one direction, making state management predictable.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 4: React vs Other Frameworks -->
+        <div id="slide-4" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">React vs. The Competition</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li><strong class="text-indigo-600">React (Library):</strong> Flexible, "just the view," often paired with other libraries for a full stack.</li>
+                <li><strong class="text-indigo-600">Angular (Framework):</strong> Opinionated, full-fledged framework with a steep learning curve.</li>
+                <li><strong class="text-indigo-600">Vue.js (Progressive Framework):</strong> Easier to learn, very performant, and can be used progressively.</li>
+                <li><strong class="text-indigo-600">Summary:</strong> React's flexibility and component model are its biggest differentiators.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: Setting Up React (with Code) -->
+        <div id="slide-5" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Setting Up Your First React App</h2>
+            <p class="text-xl text-gray-800 mb-4">The easiest way to start a new React project is by using Create React App:</p>
+            <pre><code class="language-bash">
+<span class="code-comment"># Install Create React App (if not already installed)</span>
+<span class="code-keyword">npm</span> install -g create-react-app
+
+<span class="code-comment"># Create a new React project named 'my-react-app'</span>
+<span class="code-keyword">npx</span> create-react-app my-react-app
+
+<span class="code-comment"># Navigate into your new project directory</span>
+<span class="code-keyword">cd</span> my-react-app
+
+<span class="code-comment"># Start the development server</span>
+<span class="code-keyword">npm</span> start
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">See the output of these commands on the next slide.</p>
+        </div>
+
+        <!-- Slide 6: Output for Setting Up React -->
+        <div id="slide-6" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: Setting Up React</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> These commands set up a new React project with a ready-to-use development environment. After `npm start`, it will open your default browser to `http://localhost:3000` showing your new React app, typically with a spinning React logo.</p>
+                    <div class="p-4 bg-blue-100 rounded-lg border border-blue-300 text-blue-800 mt-4">
+                        <p class="font-semibold text-center">Your React App is Running!</p>
+                        <p class="text-sm text-center">Open http://localhost:3000 to view it in the browser.</p>
+                        <div class="flex justify-center mt-4">
+                             <!-- Simple placeholder for React logo -->
+                            <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">R</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Components in React -->
+        <div id="slide-7" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">The Building Blocks: Components</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li>Everything in React is a component.</li>
+                <li>Components are reusable and can be nested within each other.</li>
+                <li><strong class="text-indigo-600">Two types of components:</strong>
+                    <ul class="list-circle list-inside ml-6 mt-2">
+                        <li><strong class="text-indigo-600">Functional Components:</strong> Simple, stateless (mostly). The modern standard.</li>
+                        <li><strong class="text-indigo-600">Class Components:</strong> State-driven, older syntax (still common in legacy code).</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Slide 8: JSX Syntax (with Code) -->
+        <div id="slide-8" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">HTML in Your JavaScript? Meet JSX</h2>
+            <p class="text-xl text-gray-800 mb-4">JSX (JavaScript XML) allows you to write HTML-like code directly in your JavaScript files. It's not HTML, but it gets compiled into React elements.</p>
+            <pre><code class="language-jsx">
+<span class="code-comment">// React Component using JSX</span>
+<span class="code-function">function</span> <span class="code-variable">App</span>() {
+  <span class="code-keyword">return</span> (
+    <span class="code-tag">&lt;div</span> <span class="code-attribute">className</span>=<span class="code-string">"container"</span><span class="code-tag">&gt;</span>
+      <span class="code-tag">&lt;h1&gt;</span>Hello, <span class="code-variable">React</span> <span class="code-variable">World!</span><span class="code-tag">&lt;/h1&gt;</span>
+      <span class="code-tag">&lt;p&gt;</span>This is a paragraph inside JSX.<span class="code-tag">&lt;/p&gt;</span>
+    <span class="code-tag">&lt;/div&gt;</span>
+  );
+}
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">See the visual output of this JSX on the next slide.</p>
+        </div>
+
+        <!-- Slide 9: Output for JSX Syntax -->
+        <div id="slide-9" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: JSX Syntax</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> This JSX code would render a simple web page with a heading and a paragraph, styled by the `container` class.</p>
+                    <div class="p-4 bg-blue-100 rounded-lg border border-blue-300 text-blue-800 mt-4">
+                        <h3 class="text-2xl font-semibold">Hello, React World!</h3>
+                        <p>This is a paragraph inside JSX.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Props in React (with Code) -->
+        <div id="slide-10" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Data In: Passing Information with Props</h2>
+            <p class="text-xl text-gray-800 mb-4">Props (short for properties) are how you pass data from a parent component to a child component. They are read-only.</p>
+            <pre><code class="language-jsx">
+<span class="code-comment">// Child Component (Greeting.js)</span>
+<span class="code-function">function</span> <span class="code-variable">Greeting</span>(<span class="code-variable">props</span>) {
+  <span class="code-keyword">return</span> <span class="code-tag">&lt;h2&gt;</span>Hello, <span class="code-tag">{</span><span class="code-variable">props</span>.<span class="code-variable">name</span><span class="code-tag">}</span>!<span class="code-tag">&lt;/h2&gt;</span>;
+}
+
+<span class="code-comment">// Parent Component (App.js)</span>
+<span class="code-function">function</span> <span class="code-variable">App</span>() {
+  <span class="code-keyword">return</span> (
+    <span class="code-tag">&lt;div&gt;</span>
+      <span class="code-tag">&lt;Greeting</span> <span class="code-attribute">name</span>=<span class="code-string">"Alice"</span> <span class="code-tag">/&gt;</span>
+      <span class="code-tag">&lt;Greeting</span> <span class="code-attribute">name</span>=<span class="code-string">"Bob"</span> <span class="code-tag">/&gt;</span>
+    <span class="code-tag">&lt;/div&gt;</span>
+  );
+}
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">See how different props result in different outputs on the next slide.</p>
+        </div>
+
+        <!-- Slide 11: Output for Props in React -->
+        <div id="slide-11" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: Props in React</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> The `Greeting` component receives different `name` props and renders personalized greetings.</p>
+                    <div class="p-4 bg-green-100 rounded-lg border border-green-300 text-green-800 mt-4">
+                        <h3 class="text-xl font-semibold">Hello, Alice!</h3>
+                        <h3 class="text-xl font-semibold">Hello, Bob!</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: State in React (with Code - Counter) -->
+        <div id="slide-12" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Data Out: Managing Component State (`useState`)</h2>
+            <p class="text-xl text-gray-800 mb-4">State allows components to manage data that changes over time, triggering re-renders.</p>
+            <pre><code class="language-jsx">
+<span class="code-comment">// Counter Component (Counter.js)</span>
+<span class="code-keyword">import</span> { <span class="code-function">useState</span> } <span class="code-keyword">from</span> <span class="code-string">'react'</span>;
+
+<span class="code-function">function</span> <span class="code-variable">Counter</span>() {
+  <span class="code-keyword">const</span> [<span class="code-variable">count</span>, <span class="code-variable">setCount</span>] = <span class="code-function">useState</span>(<span class="code-string">0</span>);
+
+  <span class="code-keyword">return</span> (
+    <span class="code-tag">&lt;div&gt;</span>
+      <span class="code-tag">&lt;p&gt;</span>Count: <span class="code-tag">{</span><span class="code-variable">count</span><span class="code-tag">}</span><span class="code-tag">&lt;/p&gt;</span>
+      <span class="code-tag">&lt;button</span> <span class="code-attribute">onClick</span>=<span class="code-tag">{</span>() => <span class="code-function">setCount</span>(<span class="code-variable">count</span> + <span class="code-string">1</span>)<span class="code-tag">}</span><span class="code-tag">&gt;</span>
+        Increment
+      <span class="code-tag">&lt;/button&gt;</span>
+    <span class="code-tag">&lt;/div&gt;</span>
+  );
+}
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">See this interactive counter in action on the next slide.</p>
+        </div>
+
+        <!-- Slide 13: Output for State in React (Counter) -->
+        <div id="slide-13" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: Counter Example</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> A simple counter. Clicking the "Increment" button updates the `count` state, which then re-renders the component to show the new value.</p>
+                    <div class="p-4 bg-yellow-100 rounded-lg border border-yellow-300 text-yellow-800 flex items-center space-x-4 mt-4">
+                        <p class="text-xl font-semibold">Count: <span class="text-indigo-700">0</span></p>
+                        <button class="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Increment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Event Handling (with Code) -->
+        <div id="slide-14" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Reacting to User Actions: Event Handling</h2>
+            <p class="text-xl text-gray-800 mb-4">Events in React are named using camelCase (e.g., `onClick`, `onChange`). You pass a function as the event handler.</p>
+            <pre><code class="language-jsx">
+<span class="code-function">function</span> <span class="code-variable">MyButton</span>() {
+  <span class="code-keyword">const</span> <span class="code-variable">handleClick</span> = () => {
+    <span class="code-function">console</span>.<span class="code-function">log</span>(<span class="code-string">'Button was clicked!'</span>);
+    <span class="code-comment">// In a real app, you might update state, fetch data, etc.</span>
+  };
+
+  <span class="code-keyword">return</span> (
+    <span class="code-tag">&lt;button</span> <span class="code-attribute">onClick</span>=<span class="code-tag">{</span><span class="code-variable">handleClick</span><span class="code-tag">}</span> <span class="code-attribute">className</span>=<span class="code-string">"px-4 py-2 bg-blue-500 text-white rounded-md"</span><span class="code-tag">&gt;</span>
+      Click Me
+    <span class="code-tag">&lt;/button&gt;</span>
+  );
+}
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">See the simulated output on the next slide.</p>
+        </div>
+
+        <!-- Slide 15: Output for Event Handling -->
+        <div id="slide-15" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: Event Handling</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> Clicking the "Click Me" button would log "Button was clicked!" to your browser's console.</p>
+                    <div class="p-4 bg-purple-100 rounded-lg border border-purple-300 text-purple-800 mt-4">
+                        <button class="px-4 py-2 bg-blue-500 text-white rounded-md">Click Me</button>
+                        <p class="mt-2 text-sm"><em>(Check your browser's console for output when this code runs)</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Conditional Rendering (with Code) -->
+        <div id="slide-16" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Showing and Hiding Components: Conditional Rendering</h2>
+            <p class="text-xl text-gray-800 mb-4">Control what is rendered based on a condition using `if`, ternary operator, or logical `&&`.</p>
+            <pre><code class="language-jsx">
+<span class="code-keyword">import</span> { <span class="code-function">useState</span> } <span class="code-keyword">from</span> <span class="code-string">'react'</span>;
+
+<span class="code-function">function</span> <span class="code-variable">LoginControl</span>() {
+  <span class="code-keyword">const</span> [<span class="code-variable">isLoggedIn</span>, <span class="code-variable">setIsLoggedIn</span>] = <span class="code-function">useState</span>(<span class="code-keyword">false</span>);
+
+  <span class="code-keyword">let</span> <span class="code-variable">button</span>;
+  <span class="code-keyword">if</span> (<span class="code-variable">isLoggedIn</span>) {
+    <span class="code-variable">button</span> = <span class="code-tag">&lt;button</span> <span class="code-attribute">onClick</span>=<span class="code-tag">{</span>() => <span class="code-function">setIsLoggedIn</span>(<span class="code-keyword">false</span>)<span class="code-tag">}</span><span class="code-tag">&gt;</span>Logout<span class="code-tag">&lt;/button&gt;</span>;
+  } <span class="code-keyword">else</span> {
+    <span class="code-variable">button</span> = <span class="code-tag">&lt;button</span> <span class="code-attribute">onClick</span>=<span class="code-tag">{</span>() => <span class="code-function">setIsLoggedIn</span>(<span class="code-keyword">true</span>)<span class="code-tag">}</span><span class="code-tag">&gt;</span>Login<span class="code-tag">&lt;/button&gt;</span>;
+  }
+
+  <span class="code-keyword">return</span> (
+    <span class="code-tag">&lt;div&gt;</span>
+      <span class="code-tag">{</span><span class="code-variable">isLoggedIn</span> ? <span class="code-tag">&lt;p&gt;</span>Welcome back!<span class="code-tag">&lt;/p&gt;</span> : <span class="code-tag">&lt;p&gt;</span>Please log in.<span class="code-tag">&lt;/p&gt;</span><span class="code-tag">}</span>
+      <span class="code-tag">{</span><span class="code-variable">button</span><span class="code-tag">}</span>
+    <span class="code-tag">&lt;/div&gt;</span>
+  );
+}
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">See how the UI changes based on the condition on the next slide.</p>
+        </div>
+
+        <!-- Slide 17: Output for Conditional Rendering -->
+        <div id="slide-17" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: Conditional Rendering</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> The text and button change based on the `isLoggedIn` state. This demonstrates how React can conditionally render elements.</p>
+                    <div class="p-4 bg-orange-100 rounded-lg border border-orange-300 text-orange-800 mt-4">
+                        <p class="text-xl font-semibold">Please log in.</p>
+                        <button class="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 mt-2">Login</button>
+                        <p class="mt-2 text-sm"><em>(Click "Login" to see change)</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Lists & Keys (with Code - Todo List Example) -->
+        <div id="slide-18" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Displaying Collections: Lists and Keys</h2>
+            <p class="text-xl text-gray-800 mb-4">Use `map()` to render lists. Each list item needs a unique `key` prop for efficient updates.</p>
+            <pre><code class="language-jsx">
+<span class="code-comment">// TodoList Component (TodoList.js)</span>
+<span class="code-function">function</span> <span class="code-variable">TodoList</span>(<span class="code-variable">props</span>) {
+  <span class="code-keyword">const</span> <span class="code-variable">todos</span> = [<span class="code-string">'Learn React'</span>, <span class="code-string">'Build an App'</span>, <span class="code-string">'Deploy to Netlify'</span>];
+
+  <span class="code-keyword">return</span> (
+    <span class="code-tag">&lt;ul&gt;</span>
+      <span class="code-tag">{</span><span class="code-variable">todos</span>.<span class="code-function">map</span>((<span class="code-variable">todo</span>, <span class="code-variable">index</span>) => (
+        <span class="code-comment">// Key should ideally be a stable ID from data, index is fallback</span>
+        <span class="code-tag">&lt;li</span> <span class="code-attribute">key</span>=<span class="code-tag">{</span><span class="code-variable">index</span><span class="code-tag">}</span><span class="code-tag">&gt;</span>
+          <span class="code-tag">{</span><span class="code-variable">todo</span><span class="code-tag">}</span>
+        <span class="code-tag">&lt;/li&gt;</span>
+      ))<span class="code-tag">}</span>
+    <span class="code-tag">&lt;/ul&gt;</span>
+  );
+}
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">View the rendered Todo List on the next slide.</p>
+        </div>
+
+        <!-- Slide 19: Output for Lists & Keys (Todo List Example) -->
+        <div id="slide-19" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: Todo List Example</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> A simple todo list. React efficiently updates the list items when data changes.</p>
+                    <div class="p-4 bg-blue-100 rounded-lg border border-blue-300 text-blue-800 mt-4">
+                        <h3 class="text-xl font-semibold mb-2">My Todos:</h3>
+                        <ul class="list-disc list-inside ml-4">
+                            <li>Learn React</li>
+                            <li>Build an App</li>
+                            <li>Deploy to Netlify</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Forms in React (with Code - Simple Input) -->
+        <div id="slide-20" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Handling User Input: Forms</h2>
+            <p class="text-xl text-gray-800 mb-4">React uses "controlled components" where form data is handled by React state.</p>
+            <pre><code class="language-jsx">
+<span class="code-keyword">import</span> { <span class="code-function">useState</span> } <span class="code-keyword">from</span> <span class="code-string">'react'</span>;
+
+<span class="code-function">function</span> <span class="code-variable">NameForm</span>() {
+  <span class="code-keyword">const</span> [<span class="code-variable">name</span>, <span class="code-variable">setName</span>] = <span class="code-function">useState</span>(<span class="code-string">''</span>);
+
+  <span class="code-keyword">const</span> <span class="code-variable">handleChange</span> = (<span class="code-variable">event</span>) => {
+    <span class="code-function">setName</span>(<span class="code-variable">event</span>.<span class="code-variable">target</span>.<span class="code-variable">value</span>);
+  };
+
+  <span class="code-keyword">const</span> <span class="code-variable">handleSubmit</span> = (<span class="code-variable">event</span>) => {
+    <span class="code-variable">event</span>.<span class="code-function">preventDefault</span>(); <span class="code-comment">// Prevent default form submission</span>
+    <span class="code-function">console</span>.<span class="code-function">log</span>(<span class="code-string">'A name was submitted: '</span> + <span class="code-variable">name</span>);
+  };
+
+  <span class="code-keyword">return</span> (
+    <span class="code-tag">&lt;form</span> <span class="code-attribute">onSubmit</span>=<span class="code-tag">{</span><span class="code-variable">handleSubmit</span><span class="code-tag">}</span><span class="code-tag">&gt;</span>
+      <span class="code-tag">&lt;label&gt;</span>
+        Name:
+        <span class="code-tag">&lt;input</span> <span class="code-attribute">type</span>=<span class="code-string">"text"</span> <span class="code-attribute">value</span>=<span class="code-tag">{</span><span class="code-variable">name</span><span class="code-tag">}</span> <span class="code-attribute">onChange</span>=<span class="code-tag">{</span><span class="code-variable">handleChange</span><span class="code-tag">}</span> <span class="code-attribute">className</span>=<span class="code-string">"border rounded-md px-2 py-1 ml-2"</span><span class="code-tag">/&gt;</span>
+      <span class="code-tag">&lt;/label&gt;</span>
+      <span class="code-tag">&lt;button</span> <span class="code-attribute">type</span>=<span class="code-string">"submit"</span> <span class="code-attribute">className</span>=<span class="code-string">"px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 mt-2"</span><span class="code-tag">&gt;</span>Submit<span class="code-tag">&lt;/button&gt;</span>
+    <span class="code-tag">&lt;/form&gt;</span>
+  );
+}
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">See the interactive form output on the next slide.</p>
+        </div>
+
+        <!-- Slide 21: Output for Forms in React -->
+        <div id="slide-21" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: Simple Form Example</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> An input field where typing updates the state, and submitting shows a message with the entered name.</p>
+                    <div class="p-4 bg-green-100 rounded-lg border border-green-300 text-green-800 mt-4">
+                        <form onsubmit="event.preventDefault(); alert('A name was submitted: ' + document.getElementById('form-name-input-simulated').value);">
+                            <label class="block mb-2">
+                                Name:
+                                <input type="text" id="form-name-input-simulated" class="border rounded-md px-2 py-1 ml-2" placeholder="Your name">
+                            </label>
+                            <button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 mt-2">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 22: React Hooks (useState) (Reiterate with better example) -->
+        <div id="slide-22" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">The Power of Hooks: `useState`</h2>
+            <p class="text-xl text-gray-800 mb-4">`useState` is the fundamental hook for adding state to functional components. It returns the current state value and a function to update it.</p>
+            <pre><code class="language-jsx">
+<span class="code-keyword">import</span> { <span class="code-function">useState</span> } <span class="code-keyword">from</span> <span class="code-string">'react'</span>;
+
+<span class="code-function">function</span> <span class="code-variable">TextInput</span>() {
+  <span class="code-keyword">const</span> [<span class="code-variable">message</span>, <span class="code-variable">setMessage</span>] = <span class="code-function">useState</span>(<span class="code-string">'Hello, world!'</span>);
+
+  <span class="code-keyword">const</span> <span class="code-variable">handleInputChange</span> = (<span class="code-variable">event</span>) => {
+    <span class="code-function">setMessage</span>(<span class="code-variable">event</span>.<span class="code-variable">target</span>.<span class="code-variable">value</span>);
+  };
+
+  <span class="code-keyword">return</span> (
+    <span class="code-tag">&lt;div&gt;</span>
+      <span class="code-tag">&lt;input</span>
+        <span class="code-attribute">type</span>=<span class="code-string">"text"</span>
+        <span class="code-attribute">value</span>=<span class="code-tag">{</span><span class="code-variable">message</span><span class="code-tag">}</span>
+        <span class="code-attribute">onChange</span>=<span class="code-tag">{</span><span class="code-variable">handleInputChange</span><span class="code-tag">}</span>
+        <span class="code-attribute">className</span>=<span class="code-string">"border rounded-md px-3 py-2"</span>
+      <span class="code-tag">/&gt;</span>
+      <span class="code-tag">&lt;p</span> <span class="code-attribute">className</span>=<span class="code-string">"mt-4 text-lg font-semibold"</span><span class="code-tag">&gt;</span>
+        You typed: <span class="code-tag">{</span><span class="code-variable">message</span><span class="code-tag">}</span>
+      <span class="code-tag">&lt;/p&gt;</span>
+    <span class="code-tag">&lt;/div&gt;</span>
+  );
+}
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">See this dynamic text input example on the next slide.</p>
+        </div>
+
+        <!-- Slide 23: Output for React Hooks (useState) -->
+        <div id="slide-23" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: `useState` Example (Text Input)</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> As you type in the input box, the text below dynamically updates, demonstrating `useState` in action.</p>
+                    <div class="p-4 bg-yellow-100 rounded-lg border border-yellow-300 text-yellow-800 mt-4">
+                        <input type="text" class="border rounded-md px-3 py-2" value="Hello, world!" disabled>
+                        <p class="mt-4 text-lg font-semibold">You typed: Hello, world!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 24: React Hooks (useEffect) (with Code - Simulated Data Fetch) -->
+        <div id="slide-24" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Side Effects in React: `useEffect`</h2>
+            <p class="text-xl text-gray-800 mb-4">`useEffect` lets you perform "side effects" like data fetching, subscriptions, or manual DOM manipulation after render.</p>
+            <pre><code class="language-jsx">
+<span class="code-keyword">import</span> { <span class="code-function">useState</span>, <span class="code-function">useEffect</span> } <span class="code-keyword">from</span> <span class="code-string">'react'</span>;
+
+<span class="code-function">function</span> <span class="code-variable">UserFetcher</span>() {
+  <span class="code-keyword">const</span> [<span class="code-variable">user</span>, <span class="code-variable">setUser</span>] = <span class="code-function">useState</span>(<span class="code-keyword">null</span>);
+  <span class="code-keyword">const</span> [<span class="code-variable">loading</span>, <span class="code-variable">setLoading</span>] = <span class="code-function">useState</span>(<span class="code-keyword">true</span>);
+
+  <span class="code-function">useEffect</span>(() => {
+    <span class="code-comment">// Simulate data fetching</span>
+    <span class="code-function">setTimeout</span>(() => {
+      <span class="code-function">setUser</span>({ <span class="code-attribute">name</span>: <span class="code-string">'Jane Doe'</span>, <span class="code-attribute">email</span>: <span class="code-string">'jane.doe@example.com'</span> });
+      <span class="code-function">setLoading</span>(<span class="code-keyword">false</span>);
+    }, <span class="code-string">2000</span>); <span class="code-comment">// Simulate 2-second delay</span>
+  }, []); <span class="code-comment">// Empty dependency array means run once on mount</span>
+
+  <span class="code-keyword">if</span> (<span class="code-variable">loading</span>) {
+    <span class="code-keyword">return</span> <span class="code-tag">&lt;p&gt;</span>Loading user data...<span class="code-tag">&lt;/p&gt;</span>;
+  }
+
+  <span class="code-keyword">return</span> (
+    <span class="code-tag">&lt;div&gt;</span>
+      <span class="code-tag">&lt;h3&gt;</span>User Profile<span class="code-tag">&lt;/h3&gt;</span>
+      <span class="code-tag">&lt;p&gt;</span>Name: <span class="code-tag">{</span><span class="code-variable">user</span>.<span class="code-variable">name</span><span class="code-tag">}</span><span class="code-tag">&lt;/p&gt;</span>
+      <span class="code-tag">&lt;p&gt;</span>Email: <span class="code-tag">{</span><span class="code-variable">user</span>.<span class="code-variable">email</span><span class="code-tag">}</span><span class="code-tag">&lt;/p&gt;</span>
+    <span class="code-tag">&lt;/div&gt;</span>
+  );
+}
+            </code></pre>
+            <p class="text-xl text-gray-700 mt-4">See the simulated data fetching output on the next slide.</p>
+        </div>
+
+        <!-- Slide 25: Output for React Hooks (useEffect) -->
+        <div id="slide-25" class="slide p-8">
+            <div class="code-output-container">
+                <h3>Output: `useEffect` Example (Data Fetch)</h3>
+                <div class="code-output-content">
+                    <p><strong>Output:</strong> Initially shows "Loading user data...", then after 2 seconds, displays the fetched user information. This simulates a common use case for `useEffect`.</p>
+                    <div class="p-4 bg-purple-100 rounded-lg border border-purple-300 text-purple-800 mt-4">
+                        <p class="text-center">Loading user data...</p>
+                        <p class="text-center mt-2 text-sm"><em>(Simulated delay of 2 seconds)</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 26: React Router Basics -->
+        <div id="slide-26" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Navigating Your App: React Router</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li>React Router is the standard library for client-side routing.</li>
+                <li>Enables single-page application navigation without full page reloads.</li>
+                <li><strong class="text-indigo-600">Key components:</strong> `<span class="font-mono text-purple-700">&lt;BrowserRouter&gt;</span>`, `<span class="font-mono text-purple-700">&lt;Route&gt;</span>`, `<span class="font-mono text-purple-700">&lt;Link&gt;</span>`.</li>
+                <li>Helps manage different pages/views in your application.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 27: Context API -->
+        <div id="slide-27" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Passing Data Without Props: The Context API</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li>Avoids "prop drilling" (passing props through many intermediate components).</li>
+                <li>Provides a way to share data (like user info or theme settings) that can be considered "global."</li>
+                <li><strong class="text-indigo-600">Three steps:</strong> `createContext`, `Provider`, and `Consumer` (or the `useContext` hook).</li>
+            </ul>
+        </div>
+
+        <!-- Slide 28: React Best Practices -->
+        <div id="slide-28" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Writing Better React Code</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li>Break down large components into smaller, reusable ones.</li>
+                <li>Follow the <strong class="text-indigo-600">Single Responsibility Principle</strong> for components.</li>
+                <li>Use `PropTypes` or TypeScript for type checking.</li>
+                <li>Keep state as local as possible.</li>
+                <li>Write clean, readable code with consistent naming conventions.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 29: Common Mistakes to Avoid -->
+        <div id="slide-29" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">Oops! Avoiding Common React Pitfalls</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li><strong class="text-indigo-600">Forgetting keys</strong> for list items.</li>
+                <li>Mutating state directly (<span class="font-mono text-purple-700">`state.count++`</span> is bad; <span class="font-mono text-purple-700">`setCount(count + 1)`</span> is good).</li>
+                <li>Unnecessary re-renders by not using the dependency array correctly in `useEffect`.</li>
+                <li>Not understanding the difference between props and state.</li>
+                <li>Putting a component inside another component's render method.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 30: Conclusion & Resources -->
+        <div id="slide-30" class="slide p-8">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-700">What's Next?</h2>
+            <ul class="list-disc list-inside text-xl text-gray-800 space-y-3 max-w-2xl">
+                <li><strong class="text-indigo-600">Recap:</strong> React is a powerful library for building modern UIs.</li>
+                <li><strong class="text-indigo-600">Next Steps:</strong>
+                    <ul class="list-circle list-inside ml-6 mt-2">
+                        <li>Build your own simple projects.</li>
+                        <li>Learn about more advanced hooks (`useReducer`, `useCallback`).</li>
+                        <li>Explore state management libraries like Redux or Zustand.</li>
+                        <li>Look into Next.js for server-side rendering and more.</li>
+                    </ul>
+                </li>
+                <li><strong class="text-indigo-600">Resources:</strong>
+                    <ul class="list-circle list-inside ml-6 mt-2">
+                        <li>Official React Docs (reactjs.org)</li>
+                        <li>MDN Web Docs</li>
+                        <li>FreeCodeCamp, Scrimba, etc.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="navigation-controls">
+            <button id="prevBtn" class="nav-button">&larr;</button>
+            <span id="slideCounter" class="slide-counter">1 / 30</span>
+            <button id="nextBtn" class="nav-button">&rarr;</button>
+        </div>
+    </div>
+
+    <script>
+        // Get all slide elements
+        const slides = document.querySelectorAll('.slide');
+        // Get navigation buttons and slide counter
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounter = document.getElementById('slideCounter');
+
+        // Initialize current slide index
+        let currentSlideIndex = 0;
+
+        /**
+         * Displays the slide at the given index and updates the counter.
+         * Hides all other slides.
+         * @param {number} index - The index of the slide to show.
+         */
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    // Add 'active' class to show the slide
+                    slide.classList.add('active');
+                } else {
+                    // Remove 'active' class to hide other slides
+                    slide.classList.remove('active');
+                }
+            });
+            // Update the slide counter text
+            slideCounter.textContent = `${index + 1} / ${slides.length}`;
+        }
+
+        /**
+         * Advances to the next slide. Loops back to the first slide if at the end.
+         */
+        function nextSlide() {
+            currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+            showSlide(currentSlideIndex);
+        }
+
+        /**
+         * Goes back to the previous slide. Loops to the last slide if at the beginning.
+         */
+        function prevSlide() {
+            currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+            showSlide(currentSlideIndex);
+        }
+
+        // Add event listeners to navigation buttons
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+
+        // Add keyboard navigation (left/right arrow keys)
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initial display of the first slide when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(currentSlideIndex);
+        });
+    </script>
+</body>
+</html>

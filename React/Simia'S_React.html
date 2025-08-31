@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React.js Basics Presentation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-4xl transform transition-transform duration-500 hover:scale-105">
+    <!-- Slide 1 -->
+    <div class="slide active" id="slide1">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Welcome to React.js Basics!
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">React is a free and open-source front-end JavaScript library for building user interfaces based on UI components.</p>
+        <p class="text-lg mb-4">It's maintained by Meta and a community of individual developers and companies.</p>
+        <p class="text-lg">Key Features:</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Component-Based Architecture</li>
+          <li>Declarative Views</li>
+          <li>Virtual DOM for efficient updates</li>
+          <li>"Learn once, write anywhere"</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide" id="slide2">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Core Concept 1: Components
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">Components are the building blocks of any React application. They are independent and reusable pieces of UI.</p>
+        <p class="text-lg mb-4">Think of them like JavaScript functions. They accept arbitrary inputs (called "props") and return React elements describing what should appear on the screen.</p>
+        <h3 class="text-xl font-semibold mb-2">Types of Components:</h3>
+        <ul class="list-disc list-inside ml-4">
+          <li><span class="font-bold">Functional Components:</span> Simple JavaScript functions. Preferred in modern React due to Hooks.</li>
+          <li><span class="font-bold">Class Components:</span> ES6 classes. Less common now but still seen in older codebases.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide" id="slide3">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Core Concept 2: JSX (JavaScript XML)
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">JSX is a syntax extension for JavaScript. It looks like HTML but it's actually JavaScript.</p>
+        <p class="text-lg mb-4">It allows you to write HTML-like elements directly within your JavaScript code, making it easier to describe your UI.</p>
+        <h3 class="text-xl font-semibold mb-2">Example:</h3>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+const MyComponent = () => {
+  return (
+    &lt;div className="text-center"&gt;
+      &lt;h1&gt;Hello, JSX!&lt;/h1&gt;
+      &lt;p&gt;This is a paragraph.&lt;/p&gt;
+    &lt;/div&gt;
+  );
+};
+          </code>
+        </pre>
+        <p class="text-lg mt-4">JSX gets compiled into regular JavaScript calls (<code>React.createElement()</code>).</p>
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide" id="slide4">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Core Concept 3: Props (Properties)
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">Props are arguments passed into React components.</p>
+        <p class="text-lg mb-4">They are read-only and allow you to pass data from a parent component to a child component.</p>
+        <h3 class="text-xl font-semibold mb-2">Example:</h3>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+// Parent Component
+const Greeting = () => {
+  return &lt;Welcome name="Alice" /&gt;;
+};
+
+// Child Component
+const Welcome = (props) => {
+  return &lt;p&gt;Hello, {props.name}!&lt;/p&gt;;
+};
+          </code>
+        </pre>
+        <p class="text-lg mt-4">Props help make components reusable and configurable.</p>
+      </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide" id="slide5">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Core Concept 4: State
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">State is data that a component can manage and change over time.</p>
+        <p class="text-lg mb-4">When a component's state changes, React re-renders the component to reflect the new state.</p>
+        <h3 class="text-xl font-semibold mb-2">Using <code>useState</code> Hook:</h3>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+import React, { useState } from 'react';
+
+const Counter = () => {
+  const [count, setCount] = useState(0); // [currentState, updaterFunction]
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;Increment&lt;/button&gt;
+    &lt;/div&gt;
+  );
+};
+          </code>
+        </pre>
+        <p class="text-lg mt-4"><code>useState</code> is a Hook that lets you add React state to functional components.</p>
+      </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide" id="slide6">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        React Hooks: useState & useEffect
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">Hooks are functions that let you "hook into" React features from your functional components.</p>
+        <h3 class="text-xl font-semibold mb-2"><code>useState</code>:</h3>
+        <p class="text-lg mb-2">Allows functional components to manage state. Returns a stateful value and a function to update it.</p>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+const [value, setValue] = useState(initialValue);
+          </code>
+        </pre>
+        <h3 class="text-xl font-semibold mt-4 mb-2"><code>useEffect</code>:</h3>
+        <p class="text-lg mb-2">Performs side effects (e.g., data fetching, subscriptions) in functional components.</p>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+useEffect(() => {
+  // Code to run after every render (or when dependencies change)
+  console.log('Component mounted or updated!');
+
+  return () => {
+    // Cleanup function (optional, runs on unmount or before re-run)
+    console.log('Cleanup!');
+  };
+}, [/* dependencies array */]);
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide" id="slide7">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Component Lifecycle with Hooks
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">Functional components manage their lifecycle using the <code>useEffect</code> Hook.</p>
+        <ul class="list-disc list-inside text-lg">
+          <li class="mb-2"><span class="font-bold">Mounting:</span> <code>useEffect</code> with an empty dependency array (<code>[]</code>) runs once after the initial render.</li>
+          <li class="mb-2"><span class="font-bold">Updating:</span> <code>useEffect</code> with dependencies (e.g., <code>[prop1, state2]</code>) runs when those dependencies change.</li>
+          <li class="mb-2"><span class="font-bold">Unmounting:</span> The return function within <code>useEffect</code> runs when the component unmounts.</li>
+        </ul>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto mt-4">
+          <code>
+useEffect(() => {
+  console.log('Component mounted!'); // Runs once on mount
+  return () => {
+    console.log('Component unmounted!'); // Runs on unmount
+  };
+}, []);
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide" id="slide8">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Component Composition
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">React's power comes from composing small, independent components into larger ones.</p>
+        <p class="text-lg mb-4">This allows for highly modular, reusable, and maintainable codebases.</p>
+        <h3 class="text-xl font-semibold mb-2">Example:</h3>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+const Button = ({ children, onClick }) => (
+  &lt;button onClick={onClick}&gt;{children}&lt;/button&gt;
+);
+
+const Card = ({ title, content }) => (
+  &lt;div className="card"&gt;
+    &lt;h2&gt;{title}&lt;/h2&gt;
+    &lt;p&gt;{content}&lt;/p&gt;
+    &lt;Button onClick={() => alert('Clicked!')}&gt;Learn More&lt;/Button&gt;
+  &lt;/div&gt;
+);
+
+const App = () => (
+  &lt;Card title="React Basics" content="Learn about components and props." /&gt;
+);
+          </code>
+        </pre>
+        <p class="text-lg mt-4">Components can accept other components as children (<code>props.children</code>).</p>
+      </div>
+    </div>
+
+    <!-- Slide 9 -->
+    <div class="slide" id="slide9">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Conditional Rendering
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">Conditional rendering in React allows you to render different elements or components based on certain conditions.</p>
+        <p class="text-lg mb-4">Common methods include <code>if/else</code>, ternary operators, and logical <code>&amp;&amp;</code> operator.</p>
+        <h3 class="text-xl font-semibold mb-2">Examples:</h3>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto mb-4">
+          <code>
+// Ternary Operator
+{isLoggedIn ? &lt;LogoutButton /&gt; : &lt;LoginButton /&gt;}
+
+// Logical &amp;&amp; Operator
+{showMessage &amp;&amp; &lt;p&gt;Welcome back!&lt;/p&gt;}
+
+// If/Else (outside JSX)
+let button;
+if (isLoggedIn) {
+  button = &lt;LogoutButton /&gt;;
+} else {
+  button = &lt;LoginButton /&gt;;
+}
+          </code>
+        </pre>
+        <p class="text-lg mt-4">This helps create dynamic UIs that respond to application state.</p>
+      </div>
+    </div>
+
+    <!-- Slide 10 -->
+    <div class="slide" id="slide10">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        List Rendering
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">To render lists of items in React, you typically use the JavaScript <code>map()</code> array method.</p>
+        <p class="text-lg mb-4">Each item in the list should have a unique <code>key</code> prop to help React efficiently update and re-render list items.</p>
+        <h3 class="text-xl font-semibold mb-2">Example:</h3>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+const numbers = [1, 2, 3, 4, 5];
+
+const NumberList = () => {
+  return (
+    &lt;ul&gt;
+      {numbers.map((number) =>
+        &lt;li key={number.toString()}&gt;{number}&lt;/li&gt;
+      )}
+    &lt;/ul&gt;
+  );
+};
+          </code>
+        </pre>
+        <p class="text-lg mt-4">The <code>key</code> prop should be stable and unique among siblings.</p>
+      </div>
+    </div>
+
+    <!-- Slide 11 -->
+    <div class="slide" id="slide11">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Advanced Hook: useContext
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">The <code>useContext</code> Hook allows you to subscribe to React Context without nesting components.</p>
+        <p class="text-lg mb-4">Context provides a way to pass data through the component tree without having to pass props down manually at every level (prop drilling).</p>
+        <h3 class="text-xl font-semibold mb-2">Usage:</h3>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+// 1. Create Context
+const ThemeContext = React.createContext('light');
+
+// 2. Provide Context
+const App = () => (
+  &lt;ThemeContext.Provider value="dark"&gt;
+    &lt;Toolbar /&gt;
+  &lt;/ThemeContext.Provider&gt;
+);
+
+// 3. Consume Context
+const Toolbar = () => {
+  const theme = useContext(ThemeContext);
+  return &lt;div className={`toolbar-${theme}`}&gt;Current theme: {theme}&lt;/div&gt;;
+};
+          </code>
+        </pre>
+        <p class="text-lg mt-4">Useful for global data like themes, user authentication, or language preferences.</p>
+      </div>
+    </div>
+
+    <!-- Slide 12 -->
+    <div class="slide" id="slide12">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Advanced Hook: useReducer
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">The <code>useReducer</code> Hook is an alternative to <code>useState</code> for more complex state logic.</p>
+        <p class="text-lg mb-4">It's often preferred when state logic involves multiple sub-values or when the next state depends on the previous one.</p>
+        <h3 class="text-xl font-semibold mb-2">Usage:</h3>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+const initialState = { count: 0 };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    default:
+      throw new Error();
+  }
+}
+
+const Counter = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    &lt;&gt;
+      Count: {state.count}
+      &lt;button onClick={() => dispatch({ type: 'increment' })}&gt;+&lt;/button&gt;
+      &lt;button onClick={() => dispatch({ type: 'decrement' })}&gt;-&lt;/button&gt;
+    &lt;/&gt;
+  );
+};
+          </code>
+        </pre>
+        <p class="text-lg mt-4">It helps centralize state update logic.</p>
+      </div>
+    </div>
+
+    <!-- Slide 13 -->
+    <div class="slide" id="slide13">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Custom Hooks
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">Custom Hooks are JavaScript functions whose names start with "use" and that can call other Hooks.</p>
+        <p class="text-lg mb-4">They allow you to extract and reuse stateful logic from components, making your code cleaner and more organized.</p>
+        <h3 class="text-xl font-semibold mb-2">Example: <code>useFetch</code></h3>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto">
+          <code>
+import { useState, useEffect } from 'react';
+
+const useFetch = (url) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const response = await fetch(url);
+      const json = await response.json();
+      setData(json);
+      setLoading(false);
+    };
+    fetchData();
+  }, [url]); // Re-run if URL changes
+
+  return { data, loading };
+};
+
+// Usage in a component:
+const MyComponent = () => {
+  const { data, loading } = useFetch('https://api.example.com/data');
+  if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;
+  return &lt;p&gt;{data.message}&lt;/p&gt;;
+};
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <!-- Slide 14 -->
+    <div class="slide" id="slide14">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Styling in React
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">There are several ways to style your React applications:</p>
+        <ul class="list-disc list-inside text-lg">
+          <li class="mb-2"><span class="font-bold">Inline Styles:</span> JavaScript objects applied directly to elements.</li>
+          <li class="mb-2"><span class="font-bold">CSS Stylesheets:</span> Traditional <code>.css</code> files imported into components.</li>
+          <li class="mb-2"><span class="font-bold">CSS Modules:</span> Localized CSS to prevent global scope issues.</li>
+          <li class="mb-2"><span class="font-bold">Styled Components:</span> CSS-in-JS library for writing CSS directly in JavaScript.</li>
+          <li class="mb-2"><span class="font-bold">Utility-First CSS (e.g., Tailwind CSS):</span> Pre-defined utility classes for rapid UI development. (This presentation uses Tailwind!)</li>
+        </ul>
+        <p class="text-lg mt-4">Choose the method that best fits your project's needs and team's preferences.</p>
+      </div>
+    </div>
+
+    <!-- Slide 15 -->
+    <div class="slide" id="slide15">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        React Routing Basics
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">For multi-page applications, you need a way to navigate between different views without full page reloads.</p>
+        <p class="text-lg mb-4">While React itself doesn't include routing, libraries like <code>React Router</code> are widely used for client-side routing.</p>
+        <h3 class="text-xl font-semibold mb-2">Core Concepts:</h3>
+        <ul class="list-disc list-inside ml-4">
+          <li><span class="font-bold">BrowserRouter:</span> Uses the HTML5 history API for clean URLs.</li>
+          <li><span class="font-bold">Routes & Route:</span> Define the paths and the components to render for those paths.</li>
+          <li><span class="font-bold">Link:</span> A component for navigation, preventing full page reloads.</li>
+        </ul>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto mt-4">
+          <code>
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+
+const App = () => (
+  &lt;BrowserRouter&gt;
+    &lt;nav&gt;
+      &lt;Link to="/"&gt;Home&lt;/Link&gt; | &lt;Link to="/about"&gt;About&lt;/Link&gt;
+    &lt;/nav&gt;
+    &lt;Routes&gt;
+      &lt;Route path="/" element={&lt;HomePage /&gt;} /&gt;
+      &lt;Route path="/about" element={&lt;AboutPage /&gt;} /&gt;
+    &lt;/Routes&gt;
+  &lt;/BrowserRouter&gt;
+);
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <!-- Slide 16 -->
+    <div class="slide" id="slide16">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        State Management Beyond useState
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">As applications grow, passing props down multiple levels (known as "prop drilling") can become cumbersome.</p>
+        <p class="text-lg mb-4">Solutions for managing global or complex state include:</p>
+        <ul class="list-disc list-inside text-lg">
+          <li class="mb-2"><span class="font-bold">Context API:</span> Built-in React feature for sharing state across the component tree without explicit prop passing.</li>
+          <li class="mb-2"><span class="font-bold">Redux:</span> A predictable state container for JavaScript apps, offering a centralized store for application state.</li>
+          <li class="mb-2"><span class="font-bold">Zustand:</span> A small, fast, and scalable bear-bones state-management solution using hooks.</li>
+          <li class="mb-2"><span class="font-bold">Recoil / Jotai:</span> Atom-based state management libraries.</li>
+        </ul>
+        <p class="text-lg mt-4">Choose a solution based on the complexity and scale of your application's state needs.</p>
+      </div>
+    </div>
+
+    <!-- Slide 17 -->
+    <div class="slide" id="slide17">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Performance Optimizations
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">Optimizing performance in React involves reducing unnecessary re-renders and computations.</p>
+        <ul class="list-disc list-inside text-lg">
+          <li class="mb-2"><span class="font-bold"><code>React.memo</code>:</span> A higher-order component that memoizes functional components, preventing re-renders if props haven't changed.</li>
+          <li class="mb-2"><span class="font-bold"><code>useCallback</code>:</span> Memoizes functions, preventing them from being re-created on every render if their dependencies haven't changed. Useful for passing callbacks to memoized child components.</li>
+          <li class="mb-2"><span class="font-bold"><code>useMemo</code>:</span> Memoizes expensive computations, re-running them only when dependencies change.</li>
+          <li class="mb-2"><span class="font-bold">Lazy Loading:</span> Using <code>React.lazy</code> and <code>Suspense</code> to load components only when needed.</li>
+        </ul>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto mt-4">
+          <code>
+const MemoizedComponent = React.memo(MyComponent);
+const handleClick = useCallback(() => { /* ... */ }, [deps]);
+const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <!-- Slide 18 -->
+    <div class="slide" id="slide18">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Error Handling in React
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-lg mb-4">Errors can occur anywhere in a React application. Handling them gracefully is crucial for user experience.</p>
+        <ul class="list-disc list-inside text-lg">
+          <li class="mb-2"><span class="font-bold">Error Boundaries:</span> React components that catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI instead of the crashed component tree.</li>
+          <li class="mb-2"><span class="font-bold"><code>try...catch</code>:</span> For imperative code like data fetching.</li>
+          <li class="mb-2"><span class="font-bold">Asynchronous Error Handling:</span> Using <code>.catch()</code> with Promises or <code>try...catch</code> with <code>async/await</code>.</li>
+        </ul>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto mt-4">
+          <code>
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return &lt;h1&gt;Something went wrong.&lt;/h1&gt;;
+    }
+    return this.props.children;
+  }
+}
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <!-- Slide 19 -->
+    <div class="slide" id="slide19">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+        Conclusion & Next Steps
+      </h1>
+      <div class="text-gray-700 text-base md:text-lg leading-relaxed mb-8 min-h-[250px] flex flex-col justify-center">
+        <p class="text-xl mb-4 text-center font-semibold">You've covered the fundamental and some advanced concepts of React.js!</p>
+        <p class="text-lg mb-4">To continue your React journey, consider exploring:</p>
+        <ul class="list-disc list-inside text-lg">
+          <li class="mb-2"><span class="font-bold">React Native:</span> For building mobile applications.</li>
+          <li class="mb-2"><span class="font-bold">Next.js / Remix:</span> Frameworks for building full-stack React applications with server-side rendering.</li>
+          <li class="mb-2"><span class="font-bold">Testing:</span> Learn about Jest, React Testing Library, and Cypress.</li>
+          <li class="mb-2"><span class="font-bold">Deployment:</span> Deploying your React apps to platforms like Vercel, Netlify, or AWS.</li>
+          <li class="mb-2"><span class="font-bold">Advanced State Management:</span> Dive deeper into Redux, Zustand, or Recoil.</li>
+        </ul>
+        <p class="text-xl mt-8 font-extrabold text-center text-purple-700">Happy Coding with React!</p>
+      </div>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="flex justify-between items-center mt-8">
+      <button
+        id="prevBtn"
+        class="px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 bg-gray-300 text-gray-600 cursor-not-allowed"
+        disabled
+      >
+        Previous
+      </button>
+      <span class="text-gray-600 text-lg font-medium">
+        <span id="currentSlide">1</span> / <span id="totalSlides">19</span>
+      </span>
+      <button
+        id="nextBtn"
+        class="px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 19;
+    
+    // Initialize the presentation
+    document.addEventListener('DOMContentLoaded', () => {
+      updateSlideCounter();
+      updateButtonStates();
+    });
+    
+    // Navigation functions
+    function goToPreviousSlide() {
+      if (currentSlide > 1) {
+        document.getElementById(`slide${currentSlide}`).classList.remove('active');
+        currentSlide--;
+        document.getElementById(`slide${currentSlide}`).classList.add('active');
+        updateSlideCounter();
+        updateButtonStates();
+      }
+    }
+    
+    function goToNextSlide() {
+      if (currentSlide < totalSlides) {
+        document.getElementById(`slide${currentSlide}`).classList.remove('active');
+        currentSlide++;
+        document.getElementById(`slide${currentSlide}`).classList.add('active');
+        updateSlideCounter();
+        updateButtonStates();
+      }
+    }
+    
+    function updateSlideCounter() {
+      document.getElementById('currentSlide').textContent = currentSlide;
+      document.getElementById('totalSlides').textContent = totalSlides;
+    }
+    
+    function updateButtonStates() {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      
+      // Update previous button
+      if (currentSlide === 1) {
+        prevBtn.disabled = true;
+        prevBtn.className = 'px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 bg-gray-300 text-gray-600 cursor-not-allowed';
+      } else {
+        prevBtn.disabled = false;
+        prevBtn.className = 'px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg';
+      }
+      
+      // Update next button
+      if (currentSlide === totalSlides) {
+        nextBtn.disabled = true;
+        nextBtn.className = 'px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 bg-gray-300 text-gray-600 cursor-not-allowed';
+      } else {
+        nextBtn.disabled = false;
+        nextBtn.className = 'px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg';
+      }
+    }
+    
+    // Event listeners for buttons
+    document.getElementById('prevBtn').addEventListener('click', goToPreviousSlide);
+    document.getElementById('nextBtn').addEventListener('click', goToNextSlide);
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        goToPreviousSlide();
+      } else if (e.key === 'ArrowRight') {
+        goToNextSlide();
+      }
+    });
+  </script>
+</body>
+</html>
