@@ -1,0 +1,20 @@
+<?php
+// Initial log entry
+echo "Session debug log created.\n";
+?>
+Username: admin, Password: 1234
+Session is set: admin
+Username: admin, Password: 1234
+Session is set: admin
+Username: admin, Password: 1234
+Session is set: admin
+Username: admin, Password: 1234
+Session is set: admin
+Username: admin, Password: 1234
+Session is set: admin
+Username: admin, Password: 1234
+Session is set: admin
+MyNewCookie set for user: admin
+Username: admin, Password: 1234
+Session is set: admin
+MyNewCookie set for user: admin
